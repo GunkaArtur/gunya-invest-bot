@@ -103,3 +103,9 @@ ${crypto[2].name} = $${crypto[2].lastPrice}
     console.log("Value not found");
   }
 });
+
+bot.on("message", (msg) => {
+  const chatId = msg.chat.id;
+
+  bot.sendMessage(chatId, "Test message works!");
+});
