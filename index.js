@@ -76,7 +76,7 @@ function getCrypto(allCrypto) {
   }));
 }
 
-cron.schedule("13 14 * * *", async () => {
+cron.schedule("25 17 * * *", async () => {
   const allCrypto = await fetchFromCMCApi();
   const gif = await fetchGifs("meme");
 
