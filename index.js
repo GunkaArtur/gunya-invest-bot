@@ -76,14 +76,16 @@ function getCrypto(allCrypto) {
   }));
 }
 
-cron.schedule("35 14 * * *", async () => {
-  const allCrypto = await fetchFromCMCApi();
-  const gif = await fetchGifs("meme");
+cron.schedule(
+  "0 9 * * *",
+  async () => {
+    const allCrypto = await fetchFromCMCApi();
+    const gif = await fetchGifs("meme");
 
-  const crypto = getCrypto(allCrypto);
+    const crypto = getCrypto(allCrypto);
 
-  if (crypto) {
-    const caption = `👋 <strong>Всем доброе утро!</strong> 
+    if (crypto) {
+      const caption = `👋 <strong>Всем доброе утро!</strong> 
             
 👇 Сегодняшние цены на основные криптовалюты:
 
@@ -98,14 +100,12 @@ ${crypto[2].name} = $${crypto[2].lastPrice}
 
 <a href="https://t.me/gunyainvest">Telegram</a> | <a href="https://www.youtube.com/@gunyainvest">YouTube</a> | <a href="https://t.me/investMoldova">Чат Invest Moldova</a>`;
 
-    sendAnimation(CHAT_ID, gif, caption);
-  } else {
-    console.log("Value not found");
-  }
-});
-
-bot.on("message", (msg) => {
-  const chatId = msg.chat.id;
-
-  bot.sendMessage(chatId, "Test message works!");
-});
+      sendAnimation(CHAT_ID, gif, caption);
+    } else {
+      console.log("Value not found");
+    }
+  },
+  {
+    timezone: "Europe/Chisinau",
+  },
+);
