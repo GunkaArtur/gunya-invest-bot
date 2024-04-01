@@ -60,10 +60,21 @@ function sendAnimation(chatId, message, caption) {
     .catch((error) => console.error("Error sending message:", error));
 }
 
+function getIcon(symbol) {
+    switch (symbol) {
+        case "BTC": return "👑"
+        case "ETH": return "🥛"
+        case "BNB": return "🤙"
+        case "SOL": return "🌙"
+        case "XRP": return "🙏🏽"
+        case "TON": return "💎"
+    }
+}
+
 function getCrypto(allCrypto) {
   const parsedCrypto = allCrypto.filter(
     (item) =>
-      item.symbol === "BTC" || item.symbol === "ETH" || item.symbol === "TON",
+        item.symbol === "BTC" || item.symbol === "ETH" || item.symbol === "BNB" || item.symbol === "SOL" || item.symbol === "XRP" || item.symbol === "TON",
   );
 
   return parsedCrypto.map((it) => ({
@@ -73,6 +84,8 @@ function getCrypto(allCrypto) {
     lastPrice: parseFloat(it.quote.USD.price.toFixed(2)) ?? 0,
     percentChange24h:
       parseFloat(it.quote.USD.percent_change_24h.toFixed(2)) ?? 0,
+    mainIcon: getIcon(it.symbol),
+    secondIcon: parseFloat(it.quote.USD.percent_change_24h.toFixed(2)) > 0 ? "🟢" : "🔴"
   }));
 }
 
@@ -89,15 +102,7 @@ cron.schedule(
             
 👇 Сегодняшние цены на основные криптовалюты:
 
-${crypto[0].name} = $${crypto[0].lastPrice}
-Рост за 24ч = ${crypto[0].percentChange24h}%
-
-${crypto[1].name} = $${crypto[1].lastPrice}
-Рост за 24ч = ${crypto[1].percentChange24h}%
-
-${crypto[2].name} = $${crypto[2].lastPrice}
-Рост за 24ч = ${crypto[2].percentChange24h}%
-
+${x}
 <a href="https://t.me/gunyainvest">Telegram</a> | <a href="https://www.youtube.com/@gunyainvest">YouTube</a> | <a href="https://t.me/investMoldova">Чат Invest Moldova</a>`;
 
       sendAnimation(CHAT_ID, gif, caption);
