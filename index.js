@@ -61,20 +61,31 @@ function sendAnimation(chatId, message, caption) {
 }
 
 function getIcon(symbol) {
-    switch (symbol) {
-        case "BTC": return "👑"
-        case "ETH": return "🥛"
-        case "BNB": return "🤙"
-        case "SOL": return "🌙"
-        case "XRP": return "🙏🏽"
-        case "TON": return "💎"
-    }
+  switch (symbol) {
+    case "BTC":
+      return "👑";
+    case "ETH":
+      return "🥛";
+    case "BNB":
+      return "🤙";
+    case "SOL":
+      return "🌙";
+    case "XRP":
+      return "🙏🏽";
+    case "TON":
+      return "💎";
+  }
 }
 
 function getCrypto(allCrypto) {
   const parsedCrypto = allCrypto.filter(
     (item) =>
-        item.symbol === "BTC" || item.symbol === "ETH" || item.symbol === "BNB" || item.symbol === "SOL" || item.symbol === "XRP" || item.symbol === "TON",
+      item.symbol === "BTC" ||
+      item.symbol === "ETH" ||
+      item.symbol === "BNB" ||
+      item.symbol === "SOL" ||
+      item.symbol === "XRP" ||
+      item.symbol === "TON",
   );
 
   return parsedCrypto.map((it) => ({
@@ -85,7 +96,8 @@ function getCrypto(allCrypto) {
     percentChange24h:
       parseFloat(it.quote.USD.percent_change_24h.toFixed(2)) ?? 0,
     mainIcon: getIcon(it.symbol),
-    secondIcon: parseFloat(it.quote.USD.percent_change_24h.toFixed(2)) > 0 ? "🟢" : "🔴"
+    secondIcon:
+      parseFloat(it.quote.USD.percent_change_24h.toFixed(2)) > 0 ? "🟢" : "🔴",
   }));
 }
 
@@ -98,11 +110,17 @@ cron.schedule(
     const crypto = getCrypto(allCrypto);
 
     if (crypto) {
+      const createdMessage = crypto
+        .map(
+          (i) =>
+            `${i.mainIcon} ${i.name} = ${i.lastPrice}$\n${i.secondIcon} Рост за 24ч = ${i.percentChange24h}%\n`,
+        )
+        .join("\n");
       const caption = `👋 <strong>Всем доброе утро!</strong> 
             
 👇 Сегодняшние цены на основные криптовалюты:
 
-${x}
+${createdMessage}
 <a href="https://t.me/gunyainvest">Telegram</a> | <a href="https://www.youtube.com/@gunyainvest">YouTube</a> | <a href="https://t.me/investMoldova">Чат Invest Moldova</a>`;
 
       sendAnimation(CHAT_ID, gif, caption);
