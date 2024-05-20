@@ -7,13 +7,19 @@ const BOT_TOKEN = process.env.BOT_TOKEN;
 const CHAT_ID = process.env.CHAT_ID;
 const API_KEY_GIF = process.env.API_KEY_GIF;
 const API_KEY_CMC = process.env.API_KEY_CMC;
+const CRYPTO_SYMBOLS = ["BTC","ETH","BNB","SOL","XRP","TON","NOT"]
 
 const bot = new TelegramBot(BOT_TOKEN, { polling: true });
+
+function sortBySymbol(arr, order) {
+  const orderMap = new Map(order.map((item, index) => [item, index]));
+  return arr.sort((a, b) => orderMap.get(a.symbol) - orderMap.get(b.symbol));
+}
 
 async function fetchFromCMCApi() {
   try {
     const res = await axios.get(
-      "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest",
+      `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${CRYPTO_SYMBOLS.join(",")}`,
       {
         headers: {
           "X-CMC_PRO_API_KEY": API_KEY_CMC,
@@ -46,9 +52,9 @@ const fetchGifs = async (keyword) => {
   }
 };
 
-function sendMessage(chatId, message) {
+function sendMessage(chatId, message, options) {
   bot
-    .sendMessage(chatId, message)
+    .sendMessage(chatId, message, options)
     .then(() => console.log("Message sent successfully"))
     .catch((error) => console.error("Error sending message:", error));
 }
@@ -74,25 +80,19 @@ function getIcon(symbol) {
       return "🙏🏽";
     case "TON":
       return "💎";
+    case "NOT":
+      return "💛";
   }
 }
 
 function getCrypto(allCrypto) {
-  const parsedCrypto = allCrypto.filter(
-    (item) =>
-      item.symbol === "BTC" ||
-      item.symbol === "ETH" ||
-      item.symbol === "BNB" ||
-      item.symbol === "SOL" ||
-      item.symbol === "XRP" ||
-      item.symbol === "TON",
-  );
+  const sortedArray = sortBySymbol(Object.values(allCrypto), CRYPTO_SYMBOLS)
 
-  return parsedCrypto.map((it) => ({
+  return sortedArray.map((it) => ({
     ticker: it.symbol,
     name: it.name,
     id: it.id,
-    lastPrice: parseFloat(it.quote.USD.price.toFixed(2)) ?? 0,
+    lastPrice: it.symbol === "NOT" ? parseFloat(it.quote.USD.price.toFixed(6)) : parseFloat(it.quote.USD.price.toFixed(2)) ?? 0,
     percentChange24h:
       parseFloat(it.quote.USD.percent_change_24h.toFixed(2)) ?? 0,
     mainIcon: getIcon(it.symbol),
