@@ -2,12 +2,13 @@ require("dotenv").config();
 const axios = require("axios");
 const TelegramBot = require("node-telegram-bot-api");
 const cron = require("node-cron");
+const puppeteer = require("puppeteer");
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const CHAT_ID = process.env.CHAT_ID;
 const API_KEY_GIF = process.env.API_KEY_GIF;
 const API_KEY_CMC = process.env.API_KEY_CMC;
-const CRYPTO_SYMBOLS = ["BTC","ETH","BNB","SOL","XRP","TON","NOT"]
+const CRYPTO_SYMBOLS = ["BTC", "ETH", "BNB", "SOL", "XRP", "TON", "NOT"];
 
 const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 
@@ -66,6 +67,13 @@ function sendAnimation(chatId, message, caption) {
     .catch((error) => console.error("Error sending message:", error));
 }
 
+function sentPhoto(chatId, message, caption) {
+  bot
+    .sendPhoto(chatId, message, { caption: caption, parse_mode: "HTML" })
+    .then(() => console.log("Message sent successfully"))
+    .catch((error) => console.error("Error sending message:", error));
+}
+
 function getIcon(symbol) {
   switch (symbol) {
     case "BTC":
@@ -86,13 +94,16 @@ function getIcon(symbol) {
 }
 
 function getCrypto(allCrypto) {
-  const sortedArray = sortBySymbol(Object.values(allCrypto), CRYPTO_SYMBOLS)
+  const sortedArray = sortBySymbol(Object.values(allCrypto), CRYPTO_SYMBOLS);
 
   return sortedArray.map((it) => ({
     ticker: it.symbol,
     name: it.name,
     id: it.id,
-    lastPrice: it.symbol === "NOT" ? parseFloat(it.quote.USD.price.toFixed(6)) : parseFloat(it.quote.USD.price.toFixed(2)) ?? 0,
+    lastPrice:
+      it.symbol === "NOT"
+        ? parseFloat(it.quote.USD.price.toFixed(6))
+        : parseFloat(it.quote.USD.price.toFixed(2)) ?? 0,
     percentChange24h:
       parseFloat(it.quote.USD.percent_change_24h.toFixed(2)) ?? 0,
     mainIcon: getIcon(it.symbol),
@@ -132,3 +143,43 @@ ${createdMessage}
     timezone: "Europe/Chisinau",
   },
 );
+
+cron.schedule(
+  "05 16 * * 1-5",
+  async () => {
+    sendImageToTelegram();
+  },
+  {
+    timezone: "Europe/Chisinau",
+  },
+);
+
+async function sendImageToTelegram() {
+  try {
+    const browser = await puppeteer.launch({ headless: false });
+    const page = await browser.newPage();
+
+    await page.goto("https://finviz.com/map.ashx?t=sec", {
+      waitUntil: "networkidle2",
+    });
+
+    await page.click(".flex.px-2 button:nth-child(2)");
+
+    await page.waitForSelector('img[alt="S&P 500 Map"]');
+
+    const imgSrc = await page.evaluate(
+      () => document.querySelector('img[alt="S&P 500 Map"]').src,
+    );
+
+    await browser.close();
+
+    const caption = `🇺🇸<strong>Открытие торгов на S&P500</strong> 👻
+
+<a href="https://t.me/gunyainvest">Telegram</a> | <a href="https://www.youtube.com/@gunyainvest">YouTube</a> | <a href="https://t.me/investMoldova">Чат Invest Moldova</a>\
+`;
+
+    sentPhoto(CHAT_ID, imgSrc, caption);
+  } catch (error) {
+    console.error("An error occurred:", error.message);
+  }
+}
