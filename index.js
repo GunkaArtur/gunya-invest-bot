@@ -2,7 +2,8 @@ require("dotenv").config();
 const axios = require("axios");
 const TelegramBot = require("node-telegram-bot-api");
 const cron = require("node-cron");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-extra");
+const StealthPlugin = require("puppeteer-extra-plugin-stealth")
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const CHAT_ID = process.env.CHAT_ID;
@@ -156,12 +157,15 @@ cron.schedule(
 
 async function sendImageToTelegram() {
   try {
-    const browser = await puppeteer.launch({ headless: false });
+    puppeteer.use(StealthPlugin())
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
     await page.goto("https://finviz.com/map.ashx?t=sec", {
       waitUntil: "networkidle2",
     });
+
+    await page.waitForSelector(".flex.px-2 button:nth-child(2)");
 
     await page.click(".flex.px-2 button:nth-child(2)");
 
