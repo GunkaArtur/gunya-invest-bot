@@ -14,8 +14,6 @@
     "dotenv": "^16.4.5",
     "node-cron": "^3.0.3",
     "node-telegram-bot-api": "^0.65.1",
-    "prettier": "^3.2.5",
-    "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2"
+    "prettier": "^3.2.5"
   }
 }
