@@ -196,18 +196,15 @@ function parseStocks(data) {
   return data.map((item) => {
     const code = item.code.slice(0, -3);
     const icon = getIcon(code);
-    console.log("Parsed Item", item);
     return `${icon} ${code} = $${item.open}\n${Number(item.change) > 0 ? "🟢" : "🔴"} Рост за 24ч: ${item.change}%\n`;
   });
 }
 
 async function sendStocksToTelegram() {
   const data = await fetchStocksData();
-  console.log("Stocks data", JSON.stringify(data));
   const gif = await fetchGifs("wolf of wall street");
 
   const x = parseStocks(data);
-  console.log("parsed stocks", x);
 
   const message = `<strong>👇 Сегодняшние цены на основные акции:</strong> 
   
@@ -217,13 +214,3 @@ ${x.join("\n")}
 
   sendAnimation(CHAT_ID, gif, message);
 }
-
-cron.schedule("* * * * *", () => {
-  console.log("---START---");
-  sendStocksToTelegram();
-  console.log("---END---");
-});
-
-// bot.on("message", () => {
-//   sendStocksToTelegram();
-// });
