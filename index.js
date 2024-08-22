@@ -194,6 +194,7 @@ async function fetchStocksData() {
 
 function parseStocks(data) {
   return data.map((item) => {
+    console.log("ITEM=", item);
     const code = item.code.slice(0, -3);
     const icon = getIcon(code);
     return `${icon} ${code} = $${item.open}\n${Number(item.change) > 0 ? "🟢" : "🔴"} Рост за 24ч: ${item.change}%\n`;
@@ -202,9 +203,11 @@ function parseStocks(data) {
 
 async function sendStocksToTelegram() {
   const data = await fetchStocksData();
+  console.log("fetchStocksData", data);
   const gif = await fetchGifs("wolf of wall street");
 
   const x = parseStocks(data);
+  console.log("parsedStocks", x);
 
   const message = `<strong>👇 Сегодняшние цены на основные акции:</strong> 
   
