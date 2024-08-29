@@ -8,7 +8,16 @@ const CHAT_ID = process.env.CHAT_ID;
 const API_KEY_GIF = process.env.API_KEY_GIF;
 const API_KEY_CMC = process.env.API_KEY_CMC;
 const API_KEY_STOCKS = process.env.API_KEY_STOCKS;
-const CRYPTO_SYMBOLS = ["BTC", "ETH", "BNB", "SOL", "XRP", "TON", "NOT"];
+const CRYPTO_SYMBOLS = [
+  "BTC",
+  "ETH",
+  "BNB",
+  "SOL",
+  "XRP",
+  "TON",
+  "NOT",
+  "DOGS",
+];
 const STOCK_SYMBOLS = [
   "MSFT.US",
   "AMZN.US",
@@ -17,6 +26,7 @@ const STOCK_SYMBOLS = [
   "TSLA.US",
   "META.US",
   "VOO.US",
+  "KWEB.US",
 ];
 
 const bot = new TelegramBot(BOT_TOKEN, { polling: true });
@@ -99,6 +109,8 @@ function getIcon(symbol) {
       return "💎";
     case "NOT":
       return "💛";
+    case "DOGS":
+      return "🐶";
     case "AAPL":
       return "🍏";
     case "MSFT":
@@ -115,6 +127,8 @@ function getIcon(symbol) {
       return "🖼";
     case "VOO":
       return "💰";
+    case "KWEB":
+      return "🇨🇳";
   }
 }
 
@@ -126,7 +140,7 @@ function getCrypto(allCrypto) {
     name: it.name,
     id: it.id,
     lastPrice:
-      it.symbol === "NOT"
+      it.symbol === "NOT" || it.symbol === "DOGS"
         ? parseFloat(it.quote.USD.price.toFixed(6))
         : parseFloat(it.quote.USD.price.toFixed(2)) ?? 0,
     percentChange24h:
