@@ -29,6 +29,8 @@ const STOCK_SYMBOLS = [
   "KWEB.US",
 ];
 
+const socialLinks = `🖼<a href="https://t.me/gunyainvest">Telegram</a> 📺<a href="https://www.youtube.com/@gunyainvest">YouTube</a> 💬<a href="https://t.me/investMoldova">Чат Invest Moldova</a> 💵<a href="https://patreon.com/GUNYAINVEST?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink">Patreon</a> 🎶<a href="https://www.tiktok.com/@investmoldova">TikTok</a>`;
+
 const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 
 function sortBySymbol(arr, order) {
@@ -171,7 +173,7 @@ cron.schedule(
 👇 Сегодняшние цены на основные криптовалюты:
 
 ${createdMessage}
-<a href="https://t.me/gunyainvest">Telegram</a> | <a href="https://www.youtube.com/@gunyainvest">YouTube</a> | <a href="https://t.me/investMoldova">Чат Invest Moldova</a>`;
+${socialLinks}`;
 
       sendAnimation(CHAT_ID, gif, caption);
     } else {
@@ -184,7 +186,7 @@ ${createdMessage}
 );
 
 cron.schedule(
-  "35 16 * * 1-5",
+  "35 15 * * 1-5",
   async () => {
     sendStocksToTelegram();
   },
@@ -223,8 +225,7 @@ async function sendStocksToTelegram() {
   const message = `<strong>👇 Сегодняшние цены на основные акции:</strong> 
   
 ${x.join("\n")}
-<a href="https://t.me/gunyainvest">Telegram</a> | <a href="https://www.youtube.com/@gunyainvest">YouTube</a> | <a href="https://t.me/investMoldova">Чат Invest Moldova</a>
-`;
+${socialLinks}`;
 
   sendAnimation(CHAT_ID, gif, message);
 }
