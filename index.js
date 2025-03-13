@@ -2,12 +2,12 @@ require("dotenv").config();
 const axios = require("axios");
 const TelegramBot = require("node-telegram-bot-api");
 const cron = require("node-cron");
+const cheerio = require("cheerio");
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const CHAT_ID = process.env.CHAT_ID;
 const API_KEY_GIF = process.env.API_KEY_GIF;
 const API_KEY_CMC = process.env.API_KEY_CMC;
-const API_KEY_STOCKS = process.env.API_KEY_STOCKS;
 const CRYPTO_SYMBOLS = [
   "BTC",
   "ETH",
@@ -19,14 +19,16 @@ const CRYPTO_SYMBOLS = [
   "DOGS",
 ];
 const STOCK_SYMBOLS = [
-  "MSFT.US",
-  "AMZN.US",
-  "NVDA.US",
-  "GOOGL.US",
-  "TSLA.US",
-  "META.US",
-  "VOO.US",
-  "KWEB.US",
+  "AAPL",
+  "MSFT",
+  "AMZN",
+  "NVDA",
+  "GOOGL",
+  "TSLA",
+  "META",
+  "VOO",
+  "BZUN",
+  "BIDU",
 ];
 
 const socialLinks = `🖼<a href="https://t.me/gunyainvest">Telegram</a> 📺<a href="https://www.youtube.com/@gunyainvest">YouTube</a> 💬<a href="https://t.me/investMoldova">Чат Invest Moldova</a> 💵<a href="https://patreon.com/GUNYAINVEST?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink">Patreon</a> 🎶<a href="https://www.tiktok.com/@investmoldova">TikTok</a>`;
@@ -131,6 +133,10 @@ function getIcon(symbol) {
       return "💰";
     case "KWEB":
       return "🇨🇳";
+    case "BZUN":
+      return "🇨🇳";
+    case "BIDU":
+      return "🇨🇳";
   }
 }
 
@@ -195,32 +201,39 @@ cron.schedule(
   },
 );
 
-async function fetchStocksData() {
-  try {
-    const res = await axios.get(
-      `https://eodhd.com/api/real-time/AAPL.US?s=${STOCK_SYMBOLS.join(",")}&api_token=${API_KEY_STOCKS}&fmt=json`,
-    );
-
-    return res.data;
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-}
-
 function parseStocks(data) {
-  return data.map((item) => {
-    const code = item.code.slice(0, -3);
-    const icon = getIcon(code);
-    return `${icon} ${code} = $${item.close}\n${Number(item.change) > 0 ? "🟢" : "🔴"} Рост за 24ч: ${item.change}%\n`;
+  return data.map(({ ticker, price, percentChange24h }) => {
+    const change = parseFloat(percentChange24h.replace(/[()%,]/g, ""));
+    const icon = getIcon(ticker);
+    return `${icon} ${ticker} = $${price}\n${Number(change) > 0 ? "🟢" : "🔴"} Рост за 24ч: ${change}%\n`;
   });
 }
 
+async function fetchPrice(id) {
+  try {
+    const url = `https://finance.yahoo.com/quote/${id}/`;
+    const { data: html } = await axios.get(url);
+    const $ = cheerio.load(html);
+    const price = $('span[data-testid="qsp-price"]').text().trim();
+    const percent = $('span[data-testid="qsp-price-change-percent"]')
+      .text()
+      .trim();
+
+    return {
+      ticker: id,
+      price: price,
+      percentChange24h: percent,
+    };
+  } catch (e) {
+    console.error(`Error fetching data for ID ${id}:`, error.message);
+  }
+}
+
 async function sendStocksToTelegram() {
-  const data = await fetchStocksData();
+  const results = await Promise.all(STOCK_SYMBOLS.map((id) => fetchPrice(id)));
   const gif = await fetchGifs("wolf of wall street");
 
-  const x = parseStocks(data);
+  const x = parseStocks(results);
 
   const message = `<strong>👇 Сегодняшние цены на основные акции:</strong> 
   
