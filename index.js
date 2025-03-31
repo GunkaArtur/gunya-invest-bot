@@ -192,7 +192,7 @@ ${socialLinks}`;
 );
 
 cron.schedule(
-  "35 15 * * 1-5",
+  "35 16 * * 1-5",
   async () => {
     sendStocksToTelegram();
   },
