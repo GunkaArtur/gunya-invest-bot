@@ -2,12 +2,12 @@ require("dotenv").config();
 const axios = require("axios");
 const TelegramBot = require("node-telegram-bot-api");
 const cron = require("node-cron");
-const cheerio = require("cheerio");
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const CHAT_ID = process.env.CHAT_ID;
 const API_KEY_GIF = process.env.API_KEY_GIF;
 const API_KEY_CMC = process.env.API_KEY_CMC;
+const API_KEY_STOCKS = process.env.API_KEY_STOCKS;
 const CRYPTO_SYMBOLS = [
   "BTC",
   "ETH",
@@ -203,35 +203,32 @@ cron.schedule(
 
 function parseStocks(data) {
   return data.map(({ ticker, price, percentChange24h }) => {
-    const change = parseFloat(percentChange24h.replace(/[()%,]/g, ""));
     const icon = getIcon(ticker);
-    return `${icon} ${ticker} = $${price}\n${Number(change) > 0 ? "🟢" : "🔴"} Рост за 24ч: ${change}%\n`;
+    return `${icon} ${ticker} = $${price}\n${Number(percentChange24h) > 0 ? "🟢" : "🔴"} Рост за 24ч: ${percentChange24h}%\n`;
   });
 }
 
 async function fetchPrice(id) {
   try {
-    const url = `https://finance.yahoo.com/quote/${id}/`;
-    const { data: html } = await axios.get(url);
-    const $ = cheerio.load(html);
-    const price = $('span[data-testid="qsp-price"]').text().trim();
-    const percent = $('span[data-testid="qsp-price-change-percent"]')
-      .text()
-      .trim();
+    const res = await fetch(
+      `https://finnhub.io/api/v1/quote?symbol=${id}&token=${API_KEY_STOCKS}`,
+    );
+
+    const data = await res.json();
 
     return {
       ticker: id,
-      price: price,
-      percentChange24h: percent,
+      price: data.c,
+      percentChange24h: data.dp,
     };
   } catch (e) {
-    console.error(`Error fetching data for ID ${id}:`, error.message);
+    console.error(e);
   }
 }
 
 async function sendStocksToTelegram() {
   const results = await Promise.all(STOCK_SYMBOLS.map((id) => fetchPrice(id)));
-  const gif = await fetchGifs("wolf of wall street");
+  const gif = await fetchGifs("money");
 
   const x = parseStocks(results);
 
@@ -242,3 +239,8 @@ ${socialLinks}`;
 
   sendAnimation(CHAT_ID, gif, message);
 }
+
+// Dev mode
+// bot.on("message", async (message) => {
+//   sendStocksToTelegram();
+// });
