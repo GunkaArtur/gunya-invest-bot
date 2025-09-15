@@ -34,29 +34,7 @@ function sentPhoto(chatId, message, caption) {
 cron.schedule(
   "0 9 * * *",
   async () => {
-    const allCrypto = await fetchFromCMCApi();
-    const gif = await fetchGifs("meme");
-
-    const crypto = convertCryptoToMessage(allCrypto);
-
-    if (crypto) {
-      const createdMessage = crypto
-        .map(
-          (i) =>
-            `${i.mainIcon} ${i.name} = ${i.lastPrice}$\n${i.secondIcon} Рост за 24ч = ${i.percentChange24h}%\n`,
-        )
-        .join("\n");
-      const caption = `👋 <strong>Всем доброе утро!</strong> 
-            
-👇 Сегодняшние цены на основные криптовалюты:
-
-${createdMessage}
-${socialLinks}`;
-
-      sendAnimation(CHAT_ID, gif, caption);
-    } else {
-      console.log("Value not found");
-    }
+    sendCryptoToTelegram();
   },
   {
     timezone: "Europe/Chisinau",
@@ -89,7 +67,34 @@ ${socialLinks}`;
   sendAnimation(CHAT_ID, gif, message);
 }
 
+async function sendCryptoToTelegram() {
+  const allCrypto = await fetchFromCMCApi();
+  const gif = await fetchGifs("meme");
+
+  const crypto = convertCryptoToMessage(allCrypto);
+
+  if (crypto) {
+    const createdMessage = crypto
+      .map(
+        (i) =>
+          `${i.mainIcon} ${i.name} = ${i.lastPrice}$\n${i.secondIcon} Рост за 24ч = ${i.percentChange24h}%\n`,
+      )
+      .join("\n");
+    const caption = `👋 <strong>Всем доброе утро!</strong> 
+            
+👇 Сегодняшние цены на основные криптовалюты:
+
+${createdMessage}
+${socialLinks}`;
+
+    sendAnimation(CHAT_ID, gif, caption);
+  } else {
+    console.log("Value not found");
+  }
+}
+
 // Dev mode
 // bot.on("message", async (message) => {
+//   // sendCryptoToTelegram();
 //   sendStocksToTelegram();
 // });
