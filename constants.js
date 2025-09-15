@@ -6,7 +6,7 @@ const CRYPTO_SYMBOLS = [
   "XRP",
   "TON",
   "NOT",
-  "DOGS",
+  "DOGE",
 ];
 const STOCK_SYMBOLS = [
   "AAPL",
@@ -17,10 +17,9 @@ const STOCK_SYMBOLS = [
   "TSLA",
   "META",
   "VOO",
-  "BZUN",
-  "BIDU",
+  "INTC",
 ];
 
-const socialLinks = `🖼<a href="https://t.me/gunyainvest">Telegram</a> 📺<a href="https://www.youtube.com/@gunyainvest">YouTube</a> 💬<a href="https://t.me/investMoldova">Чат Invest Moldova</a> 💵<a href="https://patreon.com/GUNYAINVEST?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink">Patreon</a> 🎶<a href="https://www.tiktok.com/@investmoldova">TikTok</a>`;
+const socialLinks = `🖼<a href="https://t.me/gunyainvest">Telegram</a> 📺<a href="https://www.youtube.com/@gunyainvest">YouTube</a> 💬<a href="https://t.me/investMoldova">Чат Investing Moldova</a> 💵<a href="https://patreon.com/GUNYAINVEST?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink">Patreon</a> 🎶<a href="https://www.tiktok.com/@investmoldova">TikTok</a>`;
 
 module.exports = { CRYPTO_SYMBOLS, STOCK_SYMBOLS, socialLinks };

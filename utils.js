@@ -44,6 +44,7 @@ function getIcon(symbol) {
     case "NOT":
       return "💛";
     case "DOGS":
+    case "DOGE":
       return "🐶";
     case "AAPL":
       return "🍏";
@@ -67,6 +68,8 @@ function getIcon(symbol) {
       return "🇨🇳";
     case "BIDU":
       return "🇨🇳";
+    case "INTC":
+      return "🔵";
   }
 }
 
