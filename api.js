@@ -2,7 +2,6 @@ require("dotenv").config();
 const axios = require("axios");
 const { CRYPTO_SYMBOLS } = require("./constants");
 
-const API_KEY_GIF = process.env.API_KEY_GIF;
 const API_KEY_CMC = process.env.API_KEY_CMC;
 const API_KEY_STOCKS = process.env.API_KEY_STOCKS;
 
@@ -42,26 +41,7 @@ async function fetchFromCMCApi() {
   }
 }
 
-const fetchGifs = async (keyword) => {
-  try {
-    const response = await fetch(
-      `https://api.giphy.com/v1/gifs/search?api_key=${API_KEY_GIF}&q=${keyword
-        .split(" ")
-        .join("")}`,
-    );
-
-    const data = await response.json();
-
-    const randomIndex = Math.floor(Math.random() * data.data.length);
-
-    return data.data[randomIndex]?.images?.downsized_medium.url;
-  } catch (err) {
-    console.log(err.message);
-  }
-};
-
 module.exports = {
-  fetchGifs,
   fetchFromCMCApi,
   fetchStockPrice,
 };
