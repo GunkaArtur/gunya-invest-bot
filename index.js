@@ -100,7 +100,7 @@ async function sendCryptoToTelegram() {
 ${createdMessage}
 ${socialLinks}`;
 
-    sendAnimation(
+    sendVideo(
       CHAT_ID,
       `https://pub-04810c0575bf4bdaabc07ef9d1a3e295.r2.dev/${randomIndex}.mp4`,
       caption
