@@ -45,22 +45,22 @@ cron.schedule(
   },
   {
     timezone: "Europe/Chisinau",
-  }
+  },
 );
 
 cron.schedule(
-  "35 15 * * 1-5",
+  "35 16 * * 1-5",
   async () => {
     sendStocksToTelegram();
   },
   {
     timezone: "Europe/Chisinau",
-  }
+  },
 );
 
 async function sendStocksToTelegram() {
   const results = await Promise.all(
-    STOCK_SYMBOLS.map((id) => fetchStockPrice(id))
+    STOCK_SYMBOLS.map((id) => fetchStockPrice(id)),
   );
 
   const parsedStocks = parseStocks(results);
@@ -75,7 +75,7 @@ ${socialLinks}`;
   sendVideo(
     CHAT_ID,
     `https://pub-04810c0575bf4bdaabc07ef9d1a3e295.r2.dev/${randomIndex}.mp4`,
-    message
+    message,
   );
 }
 
@@ -90,7 +90,7 @@ async function sendCryptoToTelegram() {
     const createdMessage = crypto
       .map(
         (i) =>
-          `${i.mainIcon} ${i.name} = ${i.lastPrice}$\n${i.secondIcon} Рост за 24ч = ${i.percentChange24h}%\n`
+          `${i.mainIcon} ${i.name} = ${i.lastPrice}$\n${i.secondIcon} Рост за 24ч = ${i.percentChange24h}%\n`,
       )
       .join("\n");
     const caption = `👋 <strong>Всем доброе утро!</strong> 
@@ -103,7 +103,7 @@ ${socialLinks}`;
     sendVideo(
       CHAT_ID,
       `https://pub-04810c0575bf4bdaabc07ef9d1a3e295.r2.dev/${randomIndex}.mp4`,
-      caption
+      caption,
     );
   } else {
     console.log("Value not found");
