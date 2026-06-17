@@ -40,6 +40,7 @@ function getIcon(symbol) {
     case "XRP":
       return "🙏🏽";
     case "TON":
+    case "GRAM":
       return "💎";
     case "NOT":
       return "💛";
@@ -58,6 +59,8 @@ function getIcon(symbol) {
       return "🔍";
     case "TSLA":
       return "🚗";
+    case "SPCX":
+      return "🚀";
     case "META":
       return "🖼";
     case "VOO":

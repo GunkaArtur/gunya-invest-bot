@@ -111,7 +111,7 @@ ${socialLinks}`;
 }
 
 // Dev mode
-// bot.on("message", async (message) => {
-//   // sendCryptoToTelegram();
-//   sendStocksToTelegram();
-// });
+bot.on("message", async (message) => {
+  //sendCryptoToTelegram();
+  sendStocksToTelegram();
+});

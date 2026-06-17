@@ -4,9 +4,8 @@ const CRYPTO_SYMBOLS = [
   "BNB",
   "SOL",
   "XRP",
-  "TON",
+  "GRAM",
   "NOT",
-  "DOGE",
 ];
 const STOCK_SYMBOLS = [
   "AAPL",
@@ -15,6 +14,7 @@ const STOCK_SYMBOLS = [
   "NVDA",
   "GOOGL",
   "TSLA",
+  "SPCX",
   "META",
   "VOO",
 ];
