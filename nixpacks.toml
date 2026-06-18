@@ -1,0 +1,22 @@
+# Railway / Nixpacks build configuration.
+#
+# Pins the install, build and start commands so the deploy does not depend on
+# autodetection or on the NODE_ENV value set in the Railway dashboard.
+#
+#   install: --prod=false guarantees devDependencies (typescript) are present,
+#            even when NODE_ENV=production, so the build step can run.
+#   build:   compiles TypeScript -> dist/
+#   start:   runs the compiled output
+
+# Pin the Node.js major version Nixpacks provisions.
+[variables]
+NIXPACKS_NODE_VERSION = "24"
+
+[phases.install]
+cmds = ["pnpm install --frozen-lockfile --prod=false"]
+
+[phases.build]
+cmds = ["pnpm run build"]
+
+[start]
+cmd = "pnpm start"
