@@ -1,2 +1,9 @@
+# Single-package repo. The `packages` field is required so pnpm (strict
+# versions, e.g. on Railway) does not fail with "packages field missing or empty".
+packages:
+  - .
+
+# Allow esbuild (a tsx dependency) to run its install script, so `pnpm install`
+# does not exit non-zero with ERR_PNPM_IGNORED_BUILDS.
 allowBuilds:
-  esbuild: false
+  esbuild: true
